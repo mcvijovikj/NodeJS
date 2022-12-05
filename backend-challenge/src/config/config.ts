@@ -6,7 +6,6 @@ const MONGO_USERNAME = process.env.MONGO_USERNAME;
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD;
 const MONGO_URL = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@cluster0.c7pruuy.mongodb.net/mozok-test`;
 
-const SERVER_PORT = process.env.SERVER_PORT;
 
 export const config = {
     mongo: {
@@ -14,7 +13,5 @@ export const config = {
         password: MONGO_PASSWORD,
         url: MONGO_URL
     },
-    server: {
-        port: SERVER_PORT
-    }
+
 };
