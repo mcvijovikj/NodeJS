@@ -3,8 +3,10 @@ import controller from '../controllers/Quote';
 
 const router = express.Router();
 
-router.post('/add', controller.addQuotes);
-router.get('/quotes', controller.getQuotes);
+
+router.get('/quotes', controller.getStoredData);
+router.get('/', controller.getQuotes);
 router.get('/quotes/random-quote', controller.getOneQuote);
+
 
 export = router;

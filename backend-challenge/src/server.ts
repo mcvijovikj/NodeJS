@@ -27,7 +27,7 @@ router.use(express.json());
 router.use('/', quoteRoutes);
 
 
-/** RULES OF OUR API */
+// API rules
 router.use((req, res, next) => {
     // set the CORS policy
     res.header('Access-Control-Allow-Origin', '*');

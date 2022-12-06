@@ -13,49 +13,47 @@ interface Quote {
 
 // getting all quotes
 const getQuotes = async (req: Request, res: Response, next: NextFunction) => {
-    let result: AxiosResponse = await axios.get(`https://zenquotes.io/api/quotes`);
-    let quotes: [Quote] = result.data;
+    const result: AxiosResponse = await axios.get(`https://zenquotes.io/api/quotes`);
 
-    return res.status(200).json({
-        message: quotes
+    try {
+        const quotes: [Quote] = await result.data;
+        //console.log({quotes});
+        const allQuotes = quotes.map((quote) => ({
+            q: quote['q'],
+            a: quote['a'],
+            c: quote['c'],
+            h: quote['h']
+        }))
 
-    });
+        Quote.insertMany(quotes);
+    } catch (error) {
 
-};
+    }
+}
 
-// getting a single quote
+//Fetch stored data from DB
+const getStoredData = async (req: Request, res: Response, next: NextFunction) => {
+
+    Quote.find().then(quotes => {
+        if (!quotes) {
+            res.status(400).send('Requested URL is not accessible');
+        }
+        return res.status(200).json({ quotes: quotes });
+    }).catch(err => console.log(err));
+
+}
+
+// getting a single quote from DB
 const getOneQuote = async (req: Request, res: Response, next: NextFunction) => {
 
-    let result: AxiosResponse = await axios.get(`https://zenquotes.io/api/random/`);
-    let quote: Quote = result.data;
-    return res.status(200).json({
-        message: quote
-    });
+    Quote.find().limit(1).skip(Math.random() * 22).then(quotes => {
+        if (!quotes) {
+            res.status(400).send('Requested data does not exist!');
+        }
+        return res.status(200).json({ quotes: quotes });
+    }).catch(err => console.log(err));
 };
 
 
-//adding quotes to DB
-const addQuotes = async (req: Request, res: Response, next: NextFunction) => {
-    const { q, a, c, h } = req.body;
-
-    let response: AxiosResponse = await axios.post(`https://zenquotes.io/api/quotes`, {
-        q,
-        a,
-        c,
-        h
-    });
-
-    const quote = new Quote({
-        _id: new mongoose.Types.ObjectId(),
-        q, a, c, h
-    });
-
-    return quote
-        .save()
-        .then((quote) => res.status(201).json({ quote }))
-        .catch((error) => res.status(500).json({ error }))
-};
-
-
-export default { getQuotes, getOneQuote, addQuotes }
+export default { getQuotes, getOneQuote, getStoredData }
 
